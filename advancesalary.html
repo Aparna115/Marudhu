@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advance Salary - BillFlow</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* [COPY THE SAME CSS FROM THE FILE ABOVE] */
+        :root { --bg-body: #f3f4f6; --sidebar-bg: #1e1b4b; --sidebar-width: 280px; --text-main: #e2e8f0; --text-muted: #a3a3a3; --accent: #D4AF37; --accent-glow: rgba(212, 175, 55, 0.3); --hover-bg: rgba(255, 255, 255, 0.05); --border-color: rgba(255, 255, 255, 0.1); --mc-text: #1e293b; --mc-muted: #64748b; --mc-border: #e2e8f0; --mc-card: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-body); min-height: 100vh; display: flex; }
+        .sidebar { width: var(--sidebar-width); height: 95vh; background: var(--sidebar-bg); color: var(--text-main); display: flex; flex-direction: column; margin: 2.5vh 0 0 1.5vw; border-radius: 24px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); position: fixed; overflow: hidden; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 1000; }
+        .logo-area { padding: 25px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-color); }
+        .logo-image { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; box-shadow: 0 0 15px var(--accent-glow); }
+        .logo-text { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+        .nav-scroll { flex: 1; overflow-y: auto; padding: 20px 15px; }
+        .nav-scroll::-webkit-scrollbar { width: 4px; } .nav-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ul { list-style: none; } .nav-item { margin-bottom: 5px; }
+        .nav-link { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-radius: 12px; color: var(--text-muted); text-decoration: none; transition: all 0.3s ease; cursor: pointer; font-weight: 500; font-size: 14px; position: relative; overflow: hidden; }
+        .nav-link-content { display: flex; align-items: center; gap: 12px; } .nav-link i { font-size: 20px; transition: 0.3s; } .chevron { font-size: 14px !important; transition: transform 0.3s; }
+        .nav-link:hover { background: var(--hover-bg); color: #fff; padding-left: 20px; } .nav-link.active { background: var(--accent); color: white; box-shadow: 0 10px 20px -5px var(--accent-glow); }
+        .submenu { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; padding-left: 15px; position: relative; } .submenu::before { content: ''; position: absolute; left: 33px; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,0.05); z-index: 1; }
+        .submenu-link { display: flex; align-items: center; padding: 10px 15px 10px 25px; color: var(--text-muted); font-size: 13px; text-decoration: none; margin: 2px 0; border-radius: 8px; transition: 0.2s; position: relative; z-index: 2; } .submenu-link::before { content: ''; position: absolute; left: 10px; top: 50%; width: 6px; height: 6px; border-radius: 50%; background: #475569; transform: translateY(-50%); transition: 0.3s; }
+        .submenu-link:hover { color: white; background: rgba(255,255,255,0.03); } .submenu-link:hover::before { background: var(--accent); }
+        .nav-item.open > .submenu { max-height: 500px; } .nav-item.open > .nav-link .chevron { transform: rotate(180deg); color: white; } .nav-item.open > .nav-link { color: white; }
+        .user-profile { padding: 20px; background: rgba(0,0,0,0.2); border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px; } .user-img { width: 36px; height: 36px; border-radius: 50%; background: #fff; object-fit: cover; } .user-info h4 { font-size: 14px; color: white; } .user-info p { font-size: 11px; color: var(--text-muted); }
+        .main-content { margin-left: calc(var(--sidebar-width) + 3vw); padding: 40px; flex: 1; width: calc(100% - var(--sidebar-width) - 3vw); }
+        .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; } .page-title h2 { color: var(--mc-text); font-size: 24px; font-weight: 700; } .page-title p { color: var(--mc-muted); font-size: 14px; margin-top: 4px; }
+        .btn { padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; border: none; } .btn-outline { background: white; border: 1px solid var(--mc-border); color: var(--mc-text); } .btn-primary { background: var(--sidebar-bg); color: white; } .btn-primary:hover { background: #312e81; } .btn-search { background: #f1f5f9; color: var(--mc-text); }
+        .action-toolbar { background: var(--mc-card); padding: 20px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; } .filter-group { display: flex; align-items: center; gap: 10px; } .date-input-wrapper { position: relative; display: flex; align-items: center; } .date-input-wrapper i { position: absolute; left: 12px; color: var(--mc-muted); font-size: 18px; pointer-events: none; } .date-input { padding: 10px 10px 10px 38px; border: 1px solid var(--mc-border); border-radius: 8px; outline: none; color: var(--mc-text); font-family: inherit; font-size: 13px; background: #fff; }
+        .summary-card { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: white; padding: 10px 20px; border-radius: 8px; display: flex; flex-direction: column; align-items: flex-end; min-width: 180px; } .summary-label { font-size: 11px; opacity: 0.8; margin-bottom: 2px; } .summary-value { font-size: 20px; font-weight: 700; color: var(--accent); }
+        .table-container { background: var(--mc-card); border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); overflow: hidden; min-height: 400px; } table { width: 100%; border-collapse: collapse; } thead { background: #f8fafc; } th { text-align: left; padding: 14px 20px; font-size: 12px; font-weight: 600; color: var(--mc-muted); text-transform: uppercase; letter-spacing: 0.5px; } td { padding: 16px 20px; font-size: 14px; color: var(--mc-text); border-bottom: 1px solid #f1f5f9; } .empty-state { padding: 60px; text-align: center; color: var(--mc-muted); } .empty-state i { font-size: 48px; margin-bottom: 15px; opacity: 0.5; }
+        @media (max-width: 768px) { .sidebar { transform: translateX(-120%); width: 260px; margin: 0; height: 100vh; border-radius: 0; } .sidebar.active { transform: translateX(0); } .main-content { margin-left: 0; width: 100%; padding: 20px; } .mobile-toggle { display: block; position: fixed; top: 20px; right: 20px; z-index: 1001; background: var(--sidebar-bg); color: white; padding: 10px; border-radius: 8px; cursor: pointer; } } .mobile-toggle { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-toggle" onclick="toggleSidebar()">
+        <i class="ph ph-list" style="font-size: 24px;"></i>
+    </div>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="logo-area">
+            <img src="./asset/images/WhatsApp Image 2025-12-03 at 10.48.29_a411ff9e.jpg" alt="Logo" class="logo-image">
+            <div class="logo-text">BillFlow<span style="color:var(--accent)">.</span></div>
+        </div>
+
+        <div class="nav-scroll">
+            <ul class="nav-list">
+                
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <div class="nav-link-content">
+                            <i class="ph ph-squares-four"></i>
+                            <span>Dashboard</span>
+                        </div>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="billing.html" class="nav-link" onclick="toggleMenu(this)">
+                        <div class="nav-link-content">
+                            <i class="ph ph-receipt"></i>
+                            <span>Billing</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="newbill.html" class="submenu-link">New Bill</a></li>
+                        <li><a href="returns.html" class="submenu-link">Returns / Credit Note</a></li>
+                        <li><a href="bookings.html" class="submenu-link">Bookings / Orders</a></li>
+                        <li><a href="customerlist.html" class="submenu-link">Customers List</a></li>
+                    </ul>
+                </li>
+
+               <li class="nav-item open">
+    <a href="#" class="nav-link" onclick="toggleMenu(this, event)">
+        <div class="nav-link-content">
+            <i class="ph ph-package"></i>
+            <span>Stocks</span>
+        </div>
+        <i class="ph ph-caret-down chevron"></i> 
+    </a>
+    
+    <ul class="submenu">
+        <li><a href="po_provisions.html" class="submenu-link">PO Provisions</a></li>
+        <li><a href="stock_entry.html" class="submenu-link">Stock Entry</a></li> 
+        <li><a href="damages.html" class="submenu-link">Damages</a></li>
+        <li><a href="current_stocks.html" class="submenu-link">Current Stocks</a></li>
+        <li><a href="stock_search.html" class="submenu-link">Stock Search</a></li>
+    </ul>
+</li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleMenu(this)">
+                        <div class="nav-link-content">
+                            <i class="ph ph-arrows-left-right"></i>
+                            <span>Transactions</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="customer_transaction.html" class="submenu-link">Customer Trans.</a></li>
+                        <li><a href="supplier_payment.html" class="submenu-link">Supplier Payments</a></li>
+                        <li><a href="expenses.html" class="submenu-link" >Expenses</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" onclick="toggleMenu(this)">
+                        <div class="nav-link-content">
+                            <i class="ph ph-book-bookmark"></i>
+                            <span>Daily Bookings</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="openingbalance.html" class="submenu-link">Opening Balance</a></li>
+                        <li><a href="advancesalary.html" class="submenu-link" style="color:rgb(236, 234, 101); background:rgba(255,255,255,0.03);">Advance Salary</a></li>
+                        <li><a href="expenses.html" class="submenu-link">Express / Expenses</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-link-content">
+                            <i class="ph ph-chart-pie-slice"></i>
+                            <span>Reports</span>
+                        </div>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleMenu(this)">
+                        <div class="nav-link-content">
+                            <i class="ph ph-shield-check"></i>
+                            <span>Admin</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="admin_users.html" class="submenu-link">App Users</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleMenu(this)">
+                        <div class="nav-link-content">
+                            <i class="ph ph-database"></i>
+                            <span>Master</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="brand_view.html" class="submenu-link">Brand </a></li>
+                        
+                        <li class="submenu-item">
+                            <a href="product_category.html" class="submenu-link" onclick="toggleSubMenu(this, event)" style="justify-content: space-between;">
+                                <span>Product Category</span>
+                            </a>
+                            <ul class="submenu-level-2">
+                                <li><a href="sub_category.html" class="submenu-link">Sub-Categories</a></li>
+                                <li><a href="overview.html" class="submenu-link">Overviews</a></li>
+                                <li><a href="supplier.html" class="submenu-link">Suppliers </a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+
+        <div class="user-profile">
+            <img src="https://ui-avatars.com/api/?name=Admin+User&background=D4AF37&color=fff" alt="User" class="user-img">
+            <div class="user-info">
+                <h4>Super Admin</h4>
+                <p>Manage Access</p>
+            </div>
+            <i class="ph ph-sign-out" style="margin-left: auto; cursor: pointer; color: var(--text-muted);"></i>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        
+        <header class="content-header">
+            <div class="page-title">
+                <h2>Advance Salary</h2>
+                <p>Track employee salary advances.</p>
+            </div>
+            <button class="btn btn-primary"><i class="ph ph-user-plus"></i> Add Employee Advance</button>
+        </header>
+
+        <div class="action-toolbar">
+            <div class="filter-group">
+                <div class="date-input-wrapper"><i class="ph ph-calendar-blank"></i><input type="date" class="date-input"></div>
+                <span style="color:var(--mc-muted); font-size:12px;">to</span>
+                <div class="date-input-wrapper"><i class="ph ph-calendar-blank"></i><input type="date" class="date-input"></div>
+                <button class="btn btn-search"><i class="ph ph-magnifying-glass"></i> Search</button>
+            </div>
+
+            <div class="summary-card">
+                <span class="summary-label">Total Advances</span>
+                <span class="summary-value">$0.00</span>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th>Date</th>
+                        <th>Month</th>
+                        <th>Amount</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="salary-table-body">
+                    </tbody>
+            </table>
+            <div class="empty-state">
+                <i class="ph ph-users"></i>
+                <p>No Advance Salary Records Found</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function toggleMenu(element) {
+            const parent = element.parentElement; parent.classList.toggle('open');
+            const icon = element.querySelector('.chevron');
+            if(parent.classList.contains('open')){ icon.style.transform = 'rotate(180deg)'; icon.style.color = 'white'; } else { icon.style.transform = 'rotate(0deg)'; icon.style.color = 'var(--text-muted)'; }
+        }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+    </script>
+</body>
+</html>

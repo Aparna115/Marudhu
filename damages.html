@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Billing Navbar & Damage Form</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Color Palette - Black & Gold */
+            --bg-body: #f3f4f6;
+            --sidebar-bg: #1e1b4b; /* Deep Indigo (Primary Dark) */
+            --sidebar-width: 280px;
+            --text-main: #e2e8f0;
+            --text-muted: #a3a3a3;
+            --accent: #D4AF37; /* Gold (Primary Accent) */
+            --accent-glow: rgba(212, 175, 55, 0.3);
+            --hover-bg: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.1);
+
+            /* Form Colors Synchronization */
+            --form-bg: #ffffff; 
+            --form-border: #e0e0e0;
+            --form-text: #333;
+            --form-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+            /* REVERTED: Primary button background is white/light */
+            --form-primary-btn: #fff; 
+            --form-danger: #dc3545; /* Red for Reset/Warning */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        body {
+            background-color: var(--bg-body);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* --------------------------------- */
+        /* --- Sidebar Container & Layout ---*/
+        /* --------------------------------- */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 95vh;
+            background: var(--sidebar-bg);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            margin: 2.5vh 0 0 1.5vw; 
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            position: fixed;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 1000;
+        }
+
+        /* --- Logo Area --- */
+        .logo-area {
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        /* --- Navigation List --- */
+        .nav-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 15px;
+        }
+        
+        /* Custom Scrollbar */
+        .nav-scroll::-webkit-scrollbar { width: 4px; }
+        .nav-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+
+        ul { list-style: none; }
+
+        /* Menu Item Styling */
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-link i { font-size: 20px; transition: 0.3s; }
+        .chevron { font-size: 14px !important; transition: transform 0.3s; }
+
+        /* Hover & Active States */
+        .nav-link:hover {
+            background: var(--hover-bg);
+            color: #fff;
+            padding-left: 20px; 
+        }
+
+        .nav-link.active {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 10px 20px -5px var(--accent-glow);
+        }
+
+        /* --- Submenu (Level 1) --- */
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            padding-left: 15px;
+            position: relative;
+        }
+        
+        /* Vertical line for hierarchy */
+        .submenu::before {
+            content: '';
+            position: absolute;
+            left: 33px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(255,255,255,0.05);
+            z-index: 1;
+        }
+
+        .submenu-link {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px 10px 25px;
+            color: var(--text-muted);
+            font-size: 13px;
+            text-decoration: none;
+            margin: 2px 0;
+            border-radius: 8px;
+            transition: 0.2s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .submenu-link::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #475569;
+            transform: translateY(-50%);
+            transition: 0.3s;
+        }
+
+        .submenu-link:hover { color: white; background: rgba(255,255,255,0.03); }
+
+        /* ACTIVE SUBMENU LINK STYLING */
+        .submenu-link.active-sub {
+            color: var(--accent);
+            font-weight: 600;
+            background: rgba(212, 175, 55, 0.05);
+        }
+        .submenu-link.active-sub::before { 
+            background: var(--accent);
+            width: 8px;
+            height: 8px;
+        }
+
+        /* --- Submenu (Level 2 - For Master Category) --- */
+        .submenu-level-2 {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding-left: 20px;
+            background: rgba(0,0,0,0.2); 
+            border-radius: 8px;
+            margin: 5px 0;
+        }
+
+        /* --- Active/Open Logic classes --- */
+        .nav-item.open > .submenu { max-height: 500px; } 
+        .nav-item.open > .nav-link .chevron { transform: rotate(180deg); color: white; }
+        .nav-item.open > .nav-link { color: white; }
+        
+        .submenu-item.open > .submenu-level-2 { max-height: 200px; }
+        .submenu-item.open > .submenu-link { color: var(--accent); }
+
+        /* --- Bottom User Profile --- */
+        .user-profile {
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #fff;
+            object-fit: cover;
+        }
+
+        .user-info h4 { font-size: 14px; color: white; }
+        .user-info p { font-size: 11px; color: var(--text-muted); }
+
+        /* --------------------------------- */
+        /* --- DAMAGE RETURN FORM STYLES --- */
+        /* --------------------------------- */
+
+        .breadcrumb-custom {
+            padding: 10px 15px;
+            background: none;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .breadcrumb-custom .active {
+            color: var(--sidebar-bg);
+            font-weight: 600;
+        }
+        .breadcrumb-custom i {
+            font-size: 16px;
+        }
+
+
+        .main-content {
+            margin-left: calc(var(--sidebar-width) + 3vw);
+            padding: 40px;
+            flex: 1;
+            width: calc(100% - var(--sidebar-width) - 3vw); 
+        }
+
+        .return-container {
+            width: 100%;
+            max-width: 800px; 
+            background-color: var(--form-bg);
+            border-radius: 12px;
+            box-shadow: var(--form-shadow);
+            padding: 40px;
+            margin-top: 0; 
+            margin-left: 0;
+        }
+
+        /* Form Text Color Sync */
+        .return-container h1 {
+            color: var(--sidebar-bg); 
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .return-container .subtitle {
+            color: #6c757d;
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+
+        .return-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-section {
+            border: 1px solid var(--form-border);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 0; 
+        }
+
+        /* Form Legend Color Sync */
+        .form-section legend {
+            padding: 0 10px;
+            font-size: 1.1em;
+            font-weight: 700;
+            color: var(--sidebar-bg); 
+            margin-left: -10px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .return-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .return-form input[type="text"],
+        .return-form input[type="number"],
+        .return-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--form-border);
+            border-radius: 6px;
+            font-size: 16px;
+            color: var(--form-text);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        /* Form Input Focus Color Sync */
+        .return-form input:focus,
+        .return-form textarea:focus {
+            border-color: var(--accent); 
+            outline: none;
+            box-shadow: 0 0 0 3px var(--accent-glow); 
+        }
+
+        .return-form textarea {
+            resize: vertical;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 15px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            padding-top: 10px;
+        }
+
+        .button-group button {
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        /* Submit Button REVERTED to preferred style: White BG, Black Text, Deep Indigo Border */
+        .submit-btn {
+            background-color: var(--form-primary-btn); /* #fff */
+            border: 1px solid var(--sidebar-bg);
+            color: black; 
+        }
+
+        .submit-btn:hover {
+            background-color: var(--sidebar-bg); /* Dark hover */
+            color: white; /* White text on hover */
+            transform: translateY(-1px);
+        }
+
+        /* Reset Button Color Sync (Red) */
+        .reset-btn {
+            background-color: var(--form-danger);
+            color: white;
+            border: 1px solid var(--form-danger);
+        }
+
+        .reset-btn:hover {
+            background-color: #c82333;
+            transform: translateY(-1px);
+        }
+
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-120%); width: 260px; margin: 0; height: 100vh; border-radius: 0; }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 20px; }
+            .mobile-toggle { display: block; position: fixed; top: 20px; right: 20px; z-index: 1001; background: var(--sidebar-bg); color: white; padding: 10px; border-radius: 8px; cursor: pointer; }
+            .return-container { margin: 0; max-width: 100%; padding: 20px; }
+            .breadcrumb-custom { display: none; } 
+        }
+        .mobile-toggle { display: none; }
+        @media (max-width: 600px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-toggle" onclick="toggleSidebar()">
+        <i class="ph ph-list" style="font-size: 24px;"></i>
+    </div>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="logo-area">
+            <img src="C:\xampp\htdocs\rupini\rupini\asset\images\WhatsApp Image 2025-12-03 at 10.48.29_a411ff9e.jpg" alt="Logo" class="logo-image">
+            <div class="logo-text">BillFlow<span style="color:var(--accent)">.</span></div>
+        </div>
+
+        <div class="nav-scroll">
+            <ul class="nav-list">
+                
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-link-content">
+                            <i class="ph ph-squares-four"></i>
+                            <span>Dashboard</span>
+                        </div>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleMenu(this)">
+                        <div class="nav-link-content">
+                            <i class="ph ph-receipt"></i>
+                            <span>Billing</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#" class="submenu-link">New Bill</a></li>
+                        <li><a href="#" class="submenu-link">Returns / Credit Note</a></li>
+                        <li><a href="#" class="submenu-link">Bookings / Orders</a></li>
+                        <li><a href="#" class="submenu-link">Customers List</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item open">
+                    <a href="#" class="nav-link active" onclick="toggleMenu(this)">
+                        <div class="nav-link-content">
+                            <i class="ph ph-package"></i>
+                            <span>Stocks</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#" class="submenu-link">PO Provisions</a></li>
+                        <li><a href="#" class="submenu-link">Stocks Entry</a></li>
+                        <li><a href="#" class="submenu-link active-sub">Damages</a></li> 
+                        <li><a href="#" class="submenu-link">Current Stocks</a></li>
+                        <li><a href="#" class="submenu-link">Stock Search</a></li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleMenu(this)">
+                        <div class="nav-link-content">
+                            <i class="ph ph-arrows-left-right"></i>
+                            <span>Transactions</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#" class="submenu-link">Customer Trans.</a></li>
+                        <li><a href="#" class="submenu-link">Supplier Payments</a></li>
+                         <li><a href="#" class="submenu-link">Expenses</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleMenu(this)">
+                        <div class="nav-link-content">
+                            <i class="ph ph-book-bookmark"></i>
+                            <span>Daily Bookings</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#" class="submenu-link">Opening Balance</a></li>
+                        <li><a href="#" class="submenu-link">Advance Salary</a></li>
+                        <li><a href="#" class="submenu-link">Express / Expenses</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-link-content">
+                            <i class="ph ph-chart-pie-slice"></i>
+                            <span>Reports</span>
+                        </div>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleMenu(this)">
+                        <div class="nav-link-content">
+                            <i class="ph ph-shield-check"></i>
+                            <span>Admin</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#" class="submenu-link">App Users</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleMenu(this)">
+                        <div class="nav-link-content">
+                            <i class="ph ph-database"></i>
+                            <span>Master</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#" class="submenu-link">Brand Master</a></li>
+                        
+                        <li class="submenu-item">
+                            <a href="#" class="submenu-link" onclick="toggleSubMenu(this, event)" style="justify-content: space-between;">
+                                <span>Product Category</span>
+                            </a>
+                            <ul class="submenu-level-2">
+                                <li><a href="#" class="submenu-link">Sub-Categories</a></li>
+                                <li><a href="#" class="submenu-link">Overviews</a></li>
+                                <li><a href="#" class="submenu-link">Suppliers Map</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+
+        <div class="user-profile">
+            <img src="https://ui-avatars.com/api/?name=Admin+User&background=D4AF37&color=fff" alt="User" class="user-img">
+            <div class="user-info">
+                <h4>Super Admin</h4>
+                <p>Manage Access</p>
+            </div>
+            <i class="ph ph-sign-out" style="margin-left: auto; cursor: pointer; color: var(--text-muted);"></i>
+        </div>
+    </nav>
+    
+    <div class="main-content">
+        <div class="breadcrumb-custom">
+            <i class="ph ph-push-pin" style="color: #ef4444;"></i> 
+            <span>You are Here : </span>
+            <i class="ph ph-package"></i> Stocks 
+            <i class="ph ph-caret-double-right" style="font-size: 10px;"></i> 
+            <i class="ph ph-wrench"></i> Damages 
+            <i class="ph ph-caret-double-right" style="font-size: 10px;"></i> 
+            <span class="active">Damage Return Entry</span>
+        </div>
+        
+        <div class="return-container">
+            <h1>📦 Damage Return Entry</h1>
+            <p class="subtitle">Log products being returned due to damage.</p>
+
+            <form class="return-form">
+                <fieldset class="form-section">
+                    <legend>Return Origin</legend>
+                    <div class="input-group">
+                        <label for="fromBranch">From Branch</label>
+                        <input type="text" id="fromBranch" name="fromBranch" required placeholder="e.g., Main Street Outlet">
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-section">
+                    <legend>Product Details</legend>
+                    <div class="product-grid">
+                        <div class="input-group">
+                            <label for="productCode">Product Code</label>
+                            <input type="text" id="productCode" name="productCode" required placeholder="SKU-12345">
+                        </div>
+                        <div class="input-group">
+                            <label for="brand">Brand</label>
+                            <input type="text" id="brand" name="brand" placeholder="e.g., TechCo">
+                        </div>
+                        <div class="input-group">
+                            <label for="name">Product Name</label>
+                            <input type="text" id="name" name="name" required placeholder="e.g., Wireless Mouse">
+                        </div>
+                        <div class="input-group">
+                            <label for="size">Size/Variant</label>
+                            <input type="text" id="size" name="size" placeholder="e.g., Large, Red">
+                        </div>
+                    </div>
+                    <div class="input-group quantity-group">
+                        <label for="quantity">Quantity</label>
+                        <input type="number" id="quantity" name="quantity" min="1" required value="1">
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-section">
+                    <legend>Damage Notes</legend>
+                    <div class="input-group">
+                        <label for="remarks">Remarks</label>
+                        <textarea id="remarks" name="remarks" rows="4" placeholder="Detailed description of the damage and reason for return..."></textarea>
+                    </div>
+                </fieldset>
+
+                <div class="button-group">
+                    <button type="submit" class="submit-btn">Submit Return</button>
+                    <button type="reset" class="reset-btn">Clear Form</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        // Toggle Main Level Menus
+        function toggleMenu(element) {
+            const parent = element.parentElement;
+            parent.classList.toggle('open');
+        }
+
+        // Toggle Nested Submenus (Level 3)
+        function toggleSubMenu(element, event) {
+            event.preventDefault(); 
+            event.stopPropagation(); 
+            
+            const parent = element.parentElement;
+            parent.classList.toggle('open');
+
+            const icon = element.querySelector('.chevron');
+            if(parent.classList.contains('open')){
+                icon.style.transform = 'rotate(180deg)';
+                icon.style.color = 'var(--accent)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+                icon.style.color = 'var(--text-muted)';
+            }
+        }
+
+        // Mobile Sidebar Toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

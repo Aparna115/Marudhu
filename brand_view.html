@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Brand - Premium Billing</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Color Palette - Black & Gold */
+            --bg-body: #f3f4f6;
+            --sidebar-bg: #1e1b4b; /* Black */
+            --sidebar-width: 280px;
+            --text-main: #e2e8f0;
+            --text-muted: #a3a3a3;
+            --accent: #D4AF37; /* Gold */
+            --accent-glow: rgba(212, 175, 55, 0.3);
+            --hover-bg: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --card-border: #e2e8f0;
+        }
+
+        /* --- Global Resets --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        body {
+            background-color: var(--bg-body);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* --- Sidebar Container (KEPT SAME) --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 95vh;
+            background: var(--sidebar-bg);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            margin: 2.5vh 0 0 1.5vw;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            position: fixed;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 1000;
+        }
+
+        /* --- Logo Area --- */
+        .logo-area {
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        /* --- Navigation List --- */
+        .nav-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 15px;
+        }
+        
+        .nav-scroll::-webkit-scrollbar { width: 4px; }
+        .nav-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+
+        ul { list-style: none; padding-left: 0; margin-bottom: 0; }
+
+        .nav-item { margin-bottom: 5px; }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link-content { display: flex; align-items: center; gap: 12px; }
+        .nav-link i { font-size: 20px; transition: 0.3s; }
+        .chevron { font-size: 14px !important; transition: transform 0.3s; }
+
+        .nav-link:hover { background: var(--hover-bg); color: #fff; padding-left: 20px; }
+        .nav-link.active { background: var(--accent); color: white; box-shadow: 0 10px 20px -5px var(--accent-glow); }
+
+        /* --- Submenu --- */
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            padding-left: 15px;
+            position: relative;
+        }
+        .submenu::before {
+            content: ''; position: absolute; left: 33px; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,0.05); z-index: 1;
+        }
+        .submenu-link {
+            display: flex; align-items: center; padding: 10px 15px 10px 25px; color: var(--text-muted); font-size: 13px; text-decoration: none; margin: 2px 0; border-radius: 8px; transition: 0.2s; position: relative; z-index: 2;
+        }
+        .submenu-link::before {
+            content: ''; position: absolute; left: 10px; top: 50%; width: 6px; height: 6px; border-radius: 50%; background: #475569; transform: translateY(-50%); transition: 0.3s;
+        }
+        .submenu-link:hover { color: white; background: rgba(255,255,255,0.03); }
+        .submenu-link:hover::before { background: var(--accent); }
+        
+        .nav-item.open > .submenu { max-height: 500px; }
+        .nav-item.open > .nav-link .chevron { transform: rotate(180deg); color: white; }
+        .nav-item.open > .nav-link { color: white; }
+
+        /* --- User Profile --- */
+        .user-profile {
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .user-img { width: 36px; height: 36px; border-radius: 50%; background: #fff; object-fit: cover; }
+        .user-info h4 { font-size: 14px; color: white; margin: 0; }
+        .user-info p { font-size: 11px; color: var(--text-muted); margin: 0; }
+
+        /* --- MAIN CONTENT AREA (VIEW BRAND) --- */
+        .main-content {
+            margin-left: calc(var(--sidebar-width) + 3vw);
+            padding: 30px 40px;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* Header & Breadcrumb */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .breadcrumb-custom {
+            font-size: 0.9rem; color: #64748b; display: flex; align-items: center; gap: 8px; margin-bottom: 0;
+        }
+        .breadcrumb-custom i { color: #D4AF37; }
+        .breadcrumb-custom span.active { color: #1e1b4b; font-weight: 600; }
+
+        /* Content Card */
+        .content-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border: 1px solid var(--card-border);
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+        
+        /* Toolbar in Card Header */
+        .card-header-toolbar {
+            background: #f8fafc;
+            padding: 15px 25px;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Action Buttons (View/Add) */
+        .btn-toolbar-custom {
+            padding: 8px 20px; font-weight: 600; font-size: 0.9rem; border-radius: 8px; transition: all 0.2s;
+        }
+        .btn-toolbar-active {
+            background-color: var(--accent); color: white; border: none;
+        }
+        .btn-toolbar-active:hover { background-color: #b59226; color: white; }
+        .btn-toolbar-outline {
+            background-color: transparent; color: #475569; border: 1px solid #cbd5e1;
+        }
+        .btn-toolbar-outline:hover { background-color: #e2e8f0; color: #1e1b4b; border-color: #94a3b8; }
+
+        /* Card Body & Table */
+        .card-body-custom { padding: 25px; }
+        .table-custom { margin-bottom: 0; }
+        .table-custom thead th {
+            background-color: #f1f5f9; color: #475569; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid #e2e8f0; padding: 12px 15px;
+        }
+        .table-custom tbody td {
+            padding: 12px 15px; vertical-align: middle; color: #334155; font-size: 0.95rem; border-bottom: 1px solid #f1f5f9;
+        }
+
+        /* Action Buttons in Table */
+        .btn-action {
+            padding: 5px 10px; font-size: 0.85rem; font-weight: 600; border-radius: 6px; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s;
+        }
+        .btn-action-edit {
+            background-color: #e0f2fe; color: #0ea5e9; border: 1px solid #bae6fd;
+        }
+        .btn-action-edit:hover { background-color: #bae6fd; color: #0284c7; }
+        .btn-action-remove {
+            background-color: #fee2e2; color: #ef4444; border: 1px solid #fecaca;
+        }
+        .btn-action-remove:hover { background-color: #fecaca; color: #dc2626; }
+
+        /* Pagination */
+        .pagination-custom .page-link {
+            color: #475569; border: 1px solid #cbd5e1; margin: 0 3px; border-radius: 6px;
+        }
+        .pagination-custom .page-item.active .page-link {
+            background-color: var(--accent); border-color: var(--accent); color: white;
+        }
+        .pagination-custom .page-link:hover {
+            background-color: #e2e8f0; color: #1e1b4b; border-color: #94a3b8;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 991px) {
+            .main-content { margin-left: 0; padding: 20px; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-120%); width: 260px; margin: 0; height: 100vh; border-radius: 0; }
+            .sidebar.active { transform: translateX(0); }
+            .mobile-toggle { display: block; position: fixed; top: 20px; right: 20px; z-index: 1001; background: var(--sidebar-bg); color: white; padding: 10px; border-radius: 8px; cursor: pointer; }
+        }
+        .mobile-toggle { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-toggle" onclick="toggleSidebar()">
+        <i class="ph ph-list" style="font-size: 24px;"></i>
+    </div>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="logo-area">
+            <img src="./asset/images/WhatsApp Image 2025-12-03 at 10.48.29_a411ff9e.jpg" alt="Logo" class="logo-image">
+            <div class="logo-text">BillFlow<span style="color:var(--accent)">.</span></div>
+        </div>
+        <div class="nav-scroll">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-link-content"><i class="ph ph-squares-four"></i><span>Dashboard</span></div>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleMenu(this, event)">
+                        <div class="nav-link-content"><i class="ph ph-receipt"></i><span>Billing</span></div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#" class="submenu-link">New Bill</a></li>
+                        <li><a href="#" class="submenu-link">Returns / Credit Note</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleMenu(this, event)">
+                        <div class="nav-link-content"><i class="ph ph-package"></i><span>Stocks</span></div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#" class="submenu-link">Stock Entry</a></li>
+                        <li><a href="#" class="submenu-link">Current Stocks</a></li>
+                        <li><a href="#" class="submenu-link">Stock Search</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleMenu(this, event)">
+                        <div class="nav-link-content"><i class="ph ph-arrows-left-right"></i><span>Transactions</span></div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#" class="submenu-link">Customer Trans.</a></li>
+                        <li><a href="#" class="submenu-link">Supplier Payments</a></li>
+                        <li><a href="#" class="submenu-link">Expenses</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item open">
+                    <a href="#" class="nav-link active" onclick="toggleMenu(this, event)">
+                        <div class="nav-link-content"><i class="ph ph-database"></i><span>Master</span></div>
+                        <i class="ph ph-caret-down chevron" style="transform: rotate(180deg); color: white;"></i>
+                    </a>
+                    <ul class="submenu" style="max-height: 500px;">
+                        <li><a href="#" class="submenu-link" style="color:white; background:rgba(255,255,255,0.03);">Brand Master</a></li>
+                        <li><a href="#" class="submenu-link">Product Category</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="user-profile">
+            <img src="https://ui-avatars.com/api/?name=Admin+User&background=D4AF37&color=fff" alt="User" class="user-img">
+            <div class="user-info"><h4>Super Admin</h4><p>Manage Access</p></div>
+            <i class="ph ph-sign-out" style="margin-left: auto; cursor: pointer; color: var(--text-muted);"></i>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        
+        <div class="page-header">
+            <div class="breadcrumb-custom">
+                <i class="ph ph-push-pin" style="color: #ef4444;"></i> 
+                <span>You are Here : </span>
+                <i class="ph ph-eye" style="margin-left: 5px;"></i> Master 
+                <i class="ph ph-caret-double-right" style="font-size: 10px;"></i> 
+                <span class="active">Brand Master</span>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="card-header-toolbar">
+                <button class="btn btn-toolbar-custom btn-toolbar-active">View Brand</button>
+                <button class="btn btn-toolbar-custom btn-toolbar-outline" onclick="addNewBrand()">Add New Brand</button>
+            </div>
+
+            <div class="card-body-custom">
+                <div class="table-responsive">
+                    <table class="table table-custom table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px;">S.No.</th>
+                                <th style="width: 100px;">Code</th>
+                                <th>Brand Name</th>
+                                <th style="width: 180px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><strong>1</strong></td>
+                                <td>SILVER</td>
+                                <td>
+                                    <button class="btn btn-action btn-action-edit me-2" onclick="editBrand(1)">
+                                        <i class="ph ph-pencil-simple"></i> Edit
+                                    </button>
+                                    <button class="btn btn-action btn-action-remove" onclick="removeBrand(1)">
+                                        <i class="ph ph-trash"></i> Remove
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination pagination-custom mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Toggle Menu Logic
+        function toggleMenu(element, event) {
+            if(event) event.preventDefault();
+            const parent = element.parentElement;
+            const wasOpen = parent.classList.contains('open');
+            document.querySelectorAll('.nav-item.open').forEach(item => {
+                item.classList.remove('open');
+                const icon = item.querySelector('.chevron');
+                if(icon) { icon.style.transform = 'rotate(0deg)'; icon.style.color = 'var(--text-muted)'; }
+            });
+            if (!wasOpen) { parent.classList.add('open'); }
+        }
+
+        // Mobile Sidebar Toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Placeholder functions for buttons
+        function addNewBrand() {
+            alert("Redirect to 'Add New Brand' page.");
+        }
+        function editBrand(id) {
+            alert("Editing brand with ID: " + id);
+        }
+        function removeBrand(id) {
+            if(confirm("Are you sure you want to remove this brand?")) {
+                alert("Brand with ID: " + id + " removed.");
+            }
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

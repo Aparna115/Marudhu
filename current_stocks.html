@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current Stocks - Premium Billing</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Color Palette - Black & Gold */
+            --bg-body: #f3f4f6;
+            --sidebar-bg: #1e1b4b; /* Black */
+            --sidebar-width: 280px;
+            --text-main: #e2e8f0;
+            --text-muted: #a3a3a3;
+            --accent: #D4AF37; /* Gold */
+            --accent-glow: rgba(212, 175, 55, 0.3);
+            --hover-bg: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --card-border: #e2e8f0;
+        }
+
+        /* --- Global Resets --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        body {
+            background-color: var(--bg-body);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* --- Sidebar Container (KEPT SAME) --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 95vh;
+            background: var(--sidebar-bg);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            margin: 2.5vh 0 0 1.5vw;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            position: fixed;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 1000;
+        }
+
+        /* --- Logo Area --- */
+        .logo-area {
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        /* --- Navigation List --- */
+        .nav-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 15px;
+        }
+        
+        .nav-scroll::-webkit-scrollbar { width: 4px; }
+        .nav-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+
+        ul { list-style: none; padding-left: 0; margin-bottom: 0; }
+
+        .nav-item { margin-bottom: 5px; }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link-content { display: flex; align-items: center; gap: 12px; }
+        .nav-link i { font-size: 20px; transition: 0.3s; }
+        .chevron { font-size: 14px !important; transition: transform 0.3s; }
+
+        .nav-link:hover { background: var(--hover-bg); color: #fff; padding-left: 20px; }
+        .nav-link.active { background: var(--accent); color: white; box-shadow: 0 10px 20px -5px var(--accent-glow); }
+
+        /* --- Submenu --- */
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            padding-left: 15px;
+            position: relative;
+        }
+        .submenu::before {
+            content: ''; position: absolute; left: 33px; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,0.05); z-index: 1;
+        }
+        .submenu-link {
+            display: flex; align-items: center; padding: 10px 15px 10px 25px; color: var(--text-muted); font-size: 13px; text-decoration: none; margin: 2px 0; border-radius: 8px; transition: 0.2s; position: relative; z-index: 2;
+        }
+        .submenu-link::before {
+            content: ''; position: absolute; left: 10px; top: 50%; width: 6px; height: 6px; border-radius: 50%; background: #475569; transform: translateY(-50%); transition: 0.3s;
+        }
+        .submenu-link:hover { color: white; background: rgba(255,255,255,0.03); }
+        .submenu-link:hover::before { background: var(--accent); }
+        
+        .nav-item.open > .submenu { max-height: 500px; }
+        .nav-item.open > .nav-link .chevron { transform: rotate(180deg); color: white; }
+        .nav-item.open > .nav-link { color: white; }
+
+        /* --- User Profile --- */
+        .user-profile {
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .user-img { width: 36px; height: 36px; border-radius: 50%; background: #fff; object-fit: cover; }
+        .user-info h4 { font-size: 14px; color: white; margin: 0; }
+        .user-info p { font-size: 11px; color: var(--text-muted); margin: 0; }
+
+        /* --- MAIN CONTENT AREA (CURRENT STOCKS) --- */
+        .main-content {
+            margin-left: calc(var(--sidebar-width) + 3vw);
+            padding: 30px 40px;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* Header & Breadcrumb */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .breadcrumb-custom {
+            font-size: 0.9rem; color: #64748b; display: flex; align-items: center; gap: 8px; margin-bottom: 0;
+        }
+        .breadcrumb-custom i { color: #D4AF37; }
+        .breadcrumb-custom span.active { color: #1e1b4b; font-weight: 600; }
+        .less-stock-link {
+            color: #ef4444; font-weight: 600; text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; cursor: pointer;
+        }
+        .less-stock-link:hover { text-decoration: underline; }
+
+        /* Content Cards */
+        .content-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border: 1px solid var(--card-border);
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+        .card-header-custom {
+            background: #f8fafc;
+            padding: 15px 25px;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: #1e1b4b;
+            font-size: 1.1rem;
+        }
+        .card-header-custom i { color: #64748b; font-size: 1.2rem; }
+        .card-body-custom { padding: 25px; }
+
+        /* Search Form Styles */
+        .search-label {
+            font-size: 0.85rem; font-weight: 600; color: #64748b; margin-bottom: 8px; display: block;
+        }
+        .form-control-sm-custom {
+            border-radius: 8px; border: 1px solid #cbd5e1; padding: 8px 12px; font-size: 0.9rem;
+        }
+        .form-control-sm-custom:focus { border-color: #D4AF37; box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1); }
+        .btn-search {
+            background-color: #e2e8f0; color: #475569; border: none; border-radius: 8px; padding: 8px 20px; font-weight: 600; transition: all 0.2s; height: 38px;
+        }
+        .btn-search:hover { background-color: #cbd5e1; color: #1e1b4b; }
+        .filter-group {
+            display: flex; align-items: center; gap: 10px; justify-content: flex-end;
+        }
+        .filter-select {
+            border-radius: 8px; border: 1px solid #cbd5e1; padding: 8px 30px 8px 12px; font-size: 0.9rem; background-position: right 10px center;
+        }
+
+        /* Stock Table Styles */
+        .table-custom { margin-bottom: 0; }
+        .table-custom thead th {
+            background-color: #f1f5f9; color: #475569; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid #e2e8f0; padding: 12px 15px;
+        }
+        .table-custom tbody td {
+            padding: 12px 15px; vertical-align: middle; color: #334155; font-size: 0.95rem; border-bottom: 1px solid #f1f5f9;
+        }
+        .table-custom tfoot {
+            background-color: #f8fafc; font-weight: 700; color: #1e1b4b;
+        }
+        .table-custom tfoot td { padding: 15px; border-top: 2px solid #e2e8f0; }
+        .excel-icon {
+            color: #166534; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s;
+        }
+        .excel-icon:hover { transform: translateY(-2px); }
+
+        /* Mobile Responsive */
+        @media (max-width: 991px) {
+            .main-content { margin-left: 0; padding: 20px; }
+            .filter-group { justify-content: flex-start; margin-top: 15px; }
+            .btn-search { width: 100%; margin-top: 10px; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-120%); width: 260px; margin: 0; height: 100vh; border-radius: 0; }
+            .sidebar.active { transform: translateX(0); }
+            .mobile-toggle { display: block; position: fixed; top: 20px; right: 20px; z-index: 1001; background: var(--sidebar-bg); color: white; padding: 10px; border-radius: 8px; cursor: pointer; }
+            .page-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .less-stock-link { align-self: flex-end; }
+        }
+        .mobile-toggle { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-toggle" onclick="toggleSidebar()">
+        <i class="ph ph-list" style="font-size: 24px;"></i>
+    </div>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="logo-area">
+            <img src="./asset/images/WhatsApp Image 2025-12-03 at 10.48.29_a411ff9e.jpg" alt="Logo" class="logo-image">
+            <div class="logo-text">BillFlow<span style="color:var(--accent)">.</span></div>
+        </div>
+
+        <div class="nav-scroll">
+            <ul class="nav-list">
+                
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-link-content">
+                            <i class="ph ph-squares-four"></i>
+                            <span>Dashboard</span>
+                        </div>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleMenu(this)">
+                        <div class="nav-link-content">
+                            <i class="ph ph-receipt"></i>
+                            <span>Billing</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#" class="submenu-link">New Bill</a></li>
+                        <li><a href="#" class="submenu-link">Returns / Credit Note</a></li>
+                        <li><a href="#" class="submenu-link">Bookings / Orders</a></li>
+                        <li><a href="#" class="submenu-link">Customers List</a></li>
+                    </ul>
+                </li>
+
+               <li class="nav-item open">
+    <a href="#" class="nav-link active" onclick="toggleMenu(this, event)">
+        <div class="nav-link-content">
+            <i class="ph ph-package"></i>
+            <span>Stocks</span>
+        </div>
+        <i class="ph ph-caret-down chevron"></i> 
+    </a>
+    
+    <ul class="submenu">
+        <li><a href="#" class="submenu-link">PO Provisions</a></li>
+        <li><a href="#" class="submenu-link">Stock Entry</a></li> 
+        <li><a href="#" class="submenu-link">Damages</a></li>
+        <li><a href="#" class="submenu-link"  style="color:rgb(236, 234, 101); background:rgba(255,255,255,0.03);">Current Stocks</a></li>
+        <li><a href="#" class="submenu-link">Stock Search</a></li>
+    </ul>
+</li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleMenu(this)">
+                        <div class="nav-link-content">
+                            <i class="ph ph-arrows-left-right"></i>
+                            <span>Transactions</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#" class="submenu-link">Customer Trans.</a></li>
+                        <li><a href="#" class="submenu-link">Supplier Payments</a></li>
+                        <li><a href="expenses.html" class="submenu-link">Expenses</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleMenu(this)">
+                        <div class="nav-link-content">
+                            <i class="ph ph-book-bookmark"></i>
+                            <span>Daily Bookings</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#" class="submenu-link">Opening Balance</a></li>
+                        <li><a href="#" class="submenu-link">Advance Salary</a></li>
+                        <li><a href="#" class="submenu-link">Express / Expenses</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-link-content">
+                            <i class="ph ph-chart-pie-slice"></i>
+                            <span>Reports</span>
+                        </div>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleMenu(this)">
+                        <div class="nav-link-content">
+                            <i class="ph ph-shield-check"></i>
+                            <span>Admin</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#" class="submenu-link">App Users</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleMenu(this)">
+                        <div class="nav-link-content">
+                            <i class="ph ph-database"></i>
+                            <span>Master</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#" class="submenu-link">Brand Master</a></li>
+                        
+                        <li class="submenu-item">
+                            <a href="#" class="submenu-link" onclick="toggleSubMenu(this, event)" style="justify-content: space-between;">
+                                <span>Product Category</span>
+                            </a>
+                            <ul class="submenu-level-2">
+                                <li><a href="#" class="submenu-link">Sub-Categories</a></li>
+                                <li><a href="#" class="submenu-link">Overviews</a></li>
+                                <li><a href="#" class="submenu-link">Suppliers Map</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+
+        <div class="user-profile">
+            <img src="https://ui-avatars.com/api/?name=Admin+User&background=D4AF37&color=fff" alt="User" class="user-img">
+            <div class="user-info">
+                <h4>Super Admin</h4>
+                <p>Manage Access</p>
+            </div>
+            <i class="ph ph-sign-out" style="margin-left: auto; cursor: pointer; color: var(--text-muted);"></i>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        
+        <div class="page-header">
+            <div class="breadcrumb-custom">
+                <i class="ph ph-push-pin" style="color: #ef4444;"></i> 
+                <span>You are Here : </span>
+                <i class="ph ph-eye" style="margin-left: 5px;"></i> Stock 
+                <i class="ph ph-caret-double-right" style="font-size: 10px;"></i> 
+                <i class="ph ph-wrench"></i> Product 
+                <i class="ph ph-caret-double-right" style="font-size: 10px;"></i> 
+                <span class="active">Current Stock</span>
+            </div>
+            <a href="#" class="less-stock-link">
+                <i class="ph ph-trend-down"></i> Less Stock
+            </a>
+        </div>
+
+        <div class="content-card">
+            <div class="card-header-custom">
+                <i class="ph ph-funnel"></i>
+                <span>Search Criteria</span>
+            </div>
+            <div class="card-body-custom">
+                <form>
+                    <div class="row g-3">
+                        <div class="col-md-2 col-6">
+                            <label class="search-label">Brand:</label>
+                            <input type="text" class="form-control form-control-sm-custom">
+                        </div>
+                        <div class="col-md-2 col-6">
+                            <label class="search-label">Model:</label>
+                            <input type="text" class="form-control form-control-sm-custom">
+                        </div>
+                        <div class="col-md-2 col-6">
+                            <label class="search-label">Name:</label>
+                            <input type="text" class="form-control form-control-sm-custom">
+                        </div>
+                        <div class="col-md-2 col-6">
+                            <label class="search-label">Size:</label>
+                            <input type="text" class="form-control form-control-sm-custom">
+                        </div>
+                        <div class="col-md-2 col-6">
+                            <label class="search-label">MRP:</label>
+                            <input type="text" class="form-control form-control-sm-custom">
+                        </div>
+                        
+                        <div class="col-md-2 col-12 d-flex align-items-end">
+                            <div class="w-100">
+                                <div class="filter-group mb-2">
+                                    <label class="search-label mb-0 me-2" style="white-space: nowrap;">Filter By Qty:</label>
+                                    <select class="form-select filter-select" style="width: auto;">
+                                        <option selected>0</option>
+                                        <option value="1">> 0</option>
+                                        <option value="2">< 10</option>
+                                    </select>
+                                </div>
+                                <button type="button" class="btn-search w-100" onclick="performSearch()">
+                                    <i class="ph ph-magnifying-glass me-2"></i> Search
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="card-header-custom justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="ph ph-list-bullets"></i>
+                    <span>Current Stock Product</span>
+                </div>
+                <i class="ph ph-file-xls excel-icon" title="Export to Excel" onclick="exportToExcel()"></i>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-custom table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Product Code</th>
+                                <th>Brand</th>
+                                <th>Model</th>
+                                <th>Name</th>
+                                <th>Size</th>
+                                <th class="text-end">MRP</th>
+                                <th class="text-end">S. Price</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-end">Total Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><strong>PRD001</strong></td>
+                                <td>Nike</td>
+                                <td>Air Max</td>
+                                <td>Running Shoe</td>
+                                <td>10 UK</td>
+                                <td class="text-end">12,999.00</td>
+                                <td class="text-end">11,500.00</td>
+                                <td class="text-center"><span class="badge bg-success bg-opacity-10 text-success">50</span></td>
+                                <td class="text-end">5,75,000.00</td>
+                            </tr>
+                             <tr>
+                                <td>2</td>
+                                <td><strong>PRD002</strong></td>
+                                <td>Adidas</td>
+                                <td>Ultraboost</td>
+                                <td>Sport Shoe</td>
+                                <td>9 UK</td>
+                                <td class="text-end">14,999.00</td>
+                                <td class="text-end">13,500.00</td>
+                                <td class="text-center"><span class="badge bg-warning bg-opacity-10 text-warning">5</span></td>
+                                <td class="text-end">67,500.00</td>
+                            </tr>
+                            </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="9" class="text-end">Total Amount :</td>
+                                <td class="text-end" style="color: var(--accent); font-size: 1.1rem;">6,42,500.00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Toggle Menu Logic (Same as before)
+        function toggleMenu(element, event) {
+            if(event) event.preventDefault();
+            const parent = element.parentElement;
+            const wasOpen = parent.classList.contains('open');
+            document.querySelectorAll('.nav-item.open').forEach(item => {
+                item.classList.remove('open');
+                const icon = item.querySelector('.chevron');
+                if(icon) { icon.style.transform = 'rotate(0deg)'; icon.style.color = 'var(--text-muted)'; }
+            });
+            if (!wasOpen) { parent.classList.add('open'); }
+        }
+
+        // Mobile Sidebar Toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Placeholder functions for new page functionality
+        function performSearch() {
+            alert("Search initiated based on criteria! (Backend integration required)");
+        }
+
+        function exportToExcel() {
+            alert("Exporting current stock data to Excel... (Backend integration required)");
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
