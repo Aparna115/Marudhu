@@ -3,108 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Entry - Premium Billing</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+    <title>Stock Entry - Marudhu Traders</title>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            /* Color Palette - Black & Gold */
-            --bg-body: #f3f4f6;
-            --sidebar-bg: #1e1b4b; /* Black */
-            --sidebar-width: 280px;
-            --text-main: #e2e8f0;
-            --text-muted: #a3a3a3;
-            --accent: #D4AF37; /* Gold */
-            --accent-glow: rgba(212, 175, 55, 0.3);
-            --hover-bg: rgba(255, 255, 255, 0.05);
-            --border-color: rgba(255, 255, 255, 0.1);
+            --bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #ccfbf1;
+            --gold: #D4AF37;
+            --gold-light: #f4e8c8;
+            --sidebar-bg: #1e1b4b; /* Navy Blue */
+            --border: #cbd5e1;
+            --shadow: 0 8px 25px rgba(0,0,0,0.08);
+            --danger: #ef4444;
         }
 
-        /* --- Global Resets --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background-color: var(--bg-body);
-            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
             display: flex;
-            overflow-x: hidden; /* Prevent horizontal scroll from Sidebar float */
+            min-height: 100vh;
+            padding: 15px; /* Added padding to match screen container style */
         }
 
-        /* --- Sidebar Container (YOUR ORIGINAL STYLES) --- */
+        /* Sidebar Styles - Stay within screen container */
         .sidebar {
-            width: var(--sidebar-width);
-            height: 95vh;
+            width: 260px;
             background: var(--sidebar-bg);
-            color: var(--text-main);
+            color: #e2e8f0;
             display: flex;
             flex-direction: column;
-            margin: 2.5vh 0 0 1.5vw; /* Floating effect */
-            border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
             position: fixed;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            height: calc(100vh - 30px); /* Height minus body padding */
+            top: 15px;
+            left: 15px;
+            box-shadow: var(--shadow);
             z-index: 1000;
+            transition: transform 0.3s ease;
+            border-radius: 20px; /* Rounded corners like provisions screen */
+            overflow: hidden;
         }
 
-        /* --- Logo Area --- */
         .logo-area {
-            padding: 25px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             display: flex;
             align-items: center;
+            justify-content: flex-start;
             gap: 12px;
-            border-bottom: 1px solid var(--border-color);
         }
 
         .logo-image {
-            width: 50px;
-            height: 50px;
-            border-radius: 10px;
-            object-fit: cover;
-            box-shadow: 0 0 15px var(--accent-glow);
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: #1e1b4b;
         }
 
         .logo-text {
-            font-size: 20px;
+            font-size: 1.3rem;
             font-weight: 700;
-            letter-spacing: -0.5px;
+            color: white;
         }
 
-        /* --- Navigation List --- */
+        .logo-text span { color: var(--gold); }
+
         .nav-scroll {
             flex: 1;
             overflow-y: auto;
-            padding: 20px 15px;
+            padding: 1rem 0;
         }
-        
-        .nav-scroll::-webkit-scrollbar { width: 4px; }
-        .nav-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
 
-        ul { list-style: none; padding-left: 0; margin-bottom: 0; } /* Bootstrap reset */
-
-        .nav-item {
-            margin-bottom: 5px;
-        }
+        .nav-list { list-style: none; }
+        .nav-item { margin: 4px 12px; }
 
         .nav-link {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 14px 16px;
-            border-radius: 12px;
-            color: var(--text-muted);
+            padding: 12px 15px;
+            border-radius: 10px;
+            color: #cbd5e1;
             text-decoration: none;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             cursor: pointer;
-            font-weight: 500;
             font-size: 14px;
-            position: relative;
-            overflow: hidden;
         }
 
         .nav-link-content {
@@ -113,282 +111,228 @@
             gap: 12px;
         }
 
-        .nav-link i { font-size: 20px; transition: 0.3s; }
-        .chevron { font-size: 14px !important; transition: transform 0.3s; }
-
-        /* Hover & Active States */
-        .nav-link:hover {
-            background: var(--hover-bg);
-            color: #fff;
-            padding-left: 20px; /* Slight slide effect */
-        }
+        .nav-link:hover { background: rgba(255,255,255,0.08); }
 
         .nav-link.active {
-            background: var(--accent);
-            color: white;
-            box-shadow: 0 10px 20px -5px var(--accent-glow);
+            background: var(--gold);
+            color: #1e1b4b;
+            font-weight: 600;
         }
 
-        /* --- Submenu (Level 1) --- */
+        .chevron { font-size: 14px; transition: transform 0.3s; }
+
         .submenu {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.4s ease-out;
+            transition: max-height 0.4s ease;
             padding-left: 15px;
-            position: relative;
+            list-style: none;
         }
-        
-        .submenu::before {
-            content: '';
-            position: absolute;
-            left: 33px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: rgba(255,255,255,0.05);
-            z-index: 1;
-        }
+
+        .nav-item.open > .submenu { max-height: 400px; }
+        .nav-item.open > .nav-link .chevron { transform: rotate(180deg); }
 
         .submenu-link {
-            display: flex;
-            align-items: center;
-            padding: 10px 15px 10px 25px;
-            color: var(--text-muted);
+            display: block;
+            padding: 8px 15px;
+            color: #94a3b8;
             font-size: 13px;
-            text-decoration: none;
+            border-radius: 8px;
             margin: 2px 0;
-            border-radius: 8px;
+            text-decoration: none;
             transition: 0.2s;
-            position: relative;
-            z-index: 2;
         }
 
-        .submenu-link::before {
-            content: '';
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #475569;
-            transform: translateY(-50%);
-            transition: 0.3s;
+        .submenu-link:hover { background: rgba(212, 175, 55, 0.15); color: white; }
+
+        .submenu-link.active {
+            background: var(--gold-light);
+            color: #1e1b4b;
+            font-weight: 600;
         }
 
-        .submenu-link:hover { color: white; background: rgba(255,255,255,0.03); }
-        .submenu-link:hover::before { background: var(--accent); }
-
-        /* --- Submenu (Level 2) --- */
-        .submenu-level-2 {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-            padding-left: 20px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 8px;
-            margin: 5px 0;
-        }
-
-        /* --- Active/Open Logic classes --- */
-        .nav-item.open > .submenu { max-height: 500px; }
-        .nav-item.open > .nav-link .chevron { transform: rotate(180deg); color: white; }
-        .nav-item.open > .nav-link { color: white; }
-        
-        .submenu-item.open > .submenu-level-2 { max-height: 200px; }
-        .submenu-item.open > .submenu-link { color: var(--accent); }
-
-        /* --- Bottom User Profile --- */
         .user-profile {
-            padding: 20px;
+            padding: 1rem;
             background: rgba(0,0,0,0.2);
-            border-top: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             gap: 12px;
+            color: white;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
 
         .user-img {
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
-            background: #fff;
-            object-fit: cover;
-        }
-
-        .user-info h4 { font-size: 14px; color: white; margin: 0; }
-        .user-info p { font-size: 11px; color: var(--text-muted); margin: 0; }
-
-        /* --- NEW: Main Content Area (Stock Entry) --- */
-        .main-content {
-            margin-left: calc(var(--sidebar-width) + 3vw);
-            padding: 40px;
-            flex: 1;
-            width: 100%;
-        }
-
-        .breadcrumb-custom {
-            font-size: 0.9rem;
-            color: #64748b;
-            margin-bottom: 25px;
+            background: var(--gold);
             display: flex;
             align-items: center;
-            gap: 8px;
-        }
-        
-        .breadcrumb-custom i { color: #D4AF37; }
-        .breadcrumb-custom span.active { color: #1e1b4b; font-weight: 600; }
-
-        .stock-card {
-            background: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            border: none;
-            overflow: hidden;
-            margin-bottom: 30px;
-        }
-
-        .stock-header {
-            background: #f8fafc;
-            padding: 20px 30px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .stock-header h5 {
+            justify-content: center;
+            font-weight: bold;
             color: #1e1b4b;
-            font-weight: 700;
-            margin: 0;
-            font-size: 1.25rem;
-        }
-
-        .form-container {
-            padding: 40px;
-        }
-
-        /* Form Styling */
-        .form-label {
-            color: #475569;
-            font-weight: 500;
-            margin-bottom: 0;
-            padding-top: 7px;
-        }
-
-        .form-control {
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 10px 15px;
             font-size: 14px;
-            transition: all 0.2s;
-            background-color: #fff;
         }
 
-        .form-control:focus {
-            border-color: #D4AF37;
-            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+        .user-info h4 { font-size: 13px; margin: 0; }
+        .user-info p { font-size: 11px; color: #94a3b8; margin: 0; }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 285px; /* Sidebar width + gaps */
+            padding: 1rem 2rem;
+            transition: margin-left 0.3s ease;
+            width: calc(100% - 285px);
         }
 
-        /* Highlight Product Code Input */
-        #productCode {
-            border: 2px solid #1e1b4b;
-            font-weight: 600;
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid var(--sidebar-bg);
         }
 
-        .btn-theme-save {
-            background-color: #D4AF37;
-            color: white;
-            border: none;
-            padding: 10px 30px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s;
+        .card-header {
+            background: var(--sidebar-bg);
+            color: var(--gold);
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 2px solid var(--gold);
         }
 
-        .btn-theme-save:hover {
-            background-color: #b59226;
-            transform: translateY(-2px);
-            color: white;
+        .card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
         }
 
-        .btn-theme-print {
-            background-color: transparent;
-            color: #1e1b4b;
-            border: 2px solid #1e1b4b;
-            padding: 10px 25px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s;
+        .card-body { padding: 2rem; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
             display: flex;
-            align-items: center;
+            flex-direction: column;
             gap: 8px;
         }
 
-        .btn-theme-print:hover {
-            background-color: #1e1b4b;
+        label {
+            font-weight: 600;
+            color: var(--sidebar-bg);
+            font-size: 14px;
+        }
+
+        input, select {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            margin-top: 2rem;
+        }
+
+        .items-table thead {
+            background: var(--sidebar-bg);
+            color: var(--gold);
+        }
+
+        .items-table th {
+            padding: 16px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .items-table tbody tr {
+            background: #f8fafc;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .items-table td {
+            padding: 16px;
+            vertical-align: middle;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .items-table td:first-child { border-left: 1px solid var(--border); border-radius: 12px 0 0 12px; }
+        .items-table td:last-child { border-right: 1px solid var(--border); border-radius: 0 12px 12px 0; }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--sidebar-bg);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+        }
+
+        .btn-primary:hover { background: #2a2669; }
+
+        .btn-add {
+            background: var(--gold-light);
+            color: var(--sidebar-bg);
+            padding: 10px 24px;
+            border-radius: 12px;
+            border: 1px dashed var(--gold);
+        }
+
+        .btn-danger {
+            background: var(--danger);
             color: white;
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 8px;
         }
 
-        .btn-group-custom {
-            display: flex;
-            gap: 15px;
-            justify-content: flex-end;
-            margin-top: 20px;
-            border-top: 1px solid #f1f5f9;
-            padding-top: 20px;
+        .card-footer {
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-top: 1px solid var(--border);
+            text-align: right;
         }
 
-        /* Mobile Responsive */
-        @media (max-width: 991px) {
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar { transform: translateX(-120%); width: 260px; margin: 0; height: 100vh; border-radius: 0; }
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(-110%); }
             .sidebar.active { transform: translateX(0); }
-            .mobile-toggle { display: block; position: fixed; top: 20px; right: 20px; z-index: 1001; background: var(--sidebar-bg); color: white; padding: 10px; border-radius: 8px; cursor: pointer; }
-            .form-label { text-align: left; margin-bottom: 5px; }
-        }
-        .mobile-toggle { display: none; }
-
-        /* --- PRINT CSS --- */
-        @media print {
-            .sidebar, .mobile-toggle, .btn-group-custom, .breadcrumb-custom {
-                display: none !important;
-            }
-            .main-content {
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-            body {
-                background-color: white;
-            }
-            .stock-card {
-                box-shadow: none;
-                border: 1px solid #000;
-            }
+            .main-content { margin-left: 0; width: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <div class="mobile-toggle" onclick="toggleSidebar()">
-        <i class="ph ph-list" style="font-size: 24px;"></i>
-    </div>
-
     <nav class="sidebar" id="sidebar">
         <div class="logo-area">
-            <img src="./asset/images/WhatsApp Image 2025-12-03 at 10.48.29_a411ff9e.jpg" alt="Logo" class="logo-image">
-            <div class="logo-text">BillFlow<span style="color:var(--accent)">.</span></div>
+            <div class="logo-image">BI</div>
+            <div class="logo-text">BillFlow<span>.</span></div>
         </div>
 
         <div class="nav-scroll">
             <ul class="nav-list">
-                
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <div class="nav-link-content">
@@ -407,30 +351,25 @@
                         <i class="ph ph-caret-down chevron"></i>
                     </a>
                     <ul class="submenu">
-                        <li><a href="#" class="submenu-link">New Bill</a></li>
-                        <li><a href="#" class="submenu-link">Returns / Credit Note</a></li>
-                        <li><a href="#" class="submenu-link">Bookings / Orders</a></li>
-                        <li><a href="#" class="submenu-link">Customers List</a></li>
+                        <li><a href="#" class="submenu-link">New Invoice</a></li>
+                        <li><a href="#" class="submenu-link">Invoice List</a></li>
                     </ul>
                 </li>
 
-               <li class="nav-item open">
-    <a href="#" class="nav-link active" onclick="toggleMenu(this, event)">
-        <div class="nav-link-content">
-            <i class="ph ph-package"></i>
-            <span>Stocks</span>
-        </div>
-        <i class="ph ph-caret-down chevron"></i> 
-    </a>
-    
-    <ul class="submenu">
-        <li><a href="#" class="submenu-link">PO Provisions</a></li>
-        <li><a href="#" class="submenu-link" style="color:rgb(236, 234, 101); background:rgba(255,255,255,0.03);">Stock Entry</a></li> 
-        <li><a href="#" class="submenu-link">Damages</a></li>
-        <li><a href="#" class="submenu-link">Current Stocks</a></li>
-        <li><a href="#" class="submenu-link">Stock Search</a></li>
-    </ul>
-</li>
+                <li class="nav-item open">
+                    <a href="#" class="nav-link active">
+                        <div class="nav-link-content">
+                            <i class="ph ph-package"></i>
+                            <span>Stocks</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="po_provisions.html" class="submenu-link">PO Provisions</a></li>
+                        <li><a href="stock_entry.html" class="submenu-link active">Stock Entry</a></li>
+                        <li><a href="#" class="submenu-link">Current Stock</a></li>
+                    </ul>
+                </li>
 
                 <li class="nav-item">
                     <a href="#" class="nav-link" onclick="toggleMenu(this)">
@@ -441,222 +380,157 @@
                         <i class="ph ph-caret-down chevron"></i>
                     </a>
                     <ul class="submenu">
-                        <li><a href="#" class="submenu-link">Customer Trans.</a></li>
-                        <li><a href="#" class="submenu-link">Supplier Payments</a></li>
+                        <li><a href="#" class="submenu-link">Payments</a></li>
+                        <li><a href="#" class="submenu-link">Expenses</a></li>
                     </ul>
                 </li>
-
-                <li class="nav-item">
-                    <a href="#" class="nav-link" onclick="toggleMenu(this)">
-                        <div class="nav-link-content">
-                            <i class="ph ph-book-bookmark"></i>
-                            <span>Daily Bookings</span>
-                        </div>
-                        <i class="ph ph-caret-down chevron"></i>
-                    </a>
-                    <ul class="submenu">
-                        <li><a href="#" class="submenu-link">Opening Balance</a></li>
-                        <li><a href="#" class="submenu-link">Advance Salary</a></li>
-                        <li><a href="#" class="submenu-link">Express / Expenses</a></li>
-                    </ul>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <div class="nav-link-content">
-                            <i class="ph ph-chart-pie-slice"></i>
-                            <span>Reports</span>
-                        </div>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#" class="nav-link" onclick="toggleMenu(this)">
-                        <div class="nav-link-content">
-                            <i class="ph ph-shield-check"></i>
-                            <span>Admin</span>
-                        </div>
-                        <i class="ph ph-caret-down chevron"></i>
-                    </a>
-                    <ul class="submenu">
-                        <li><a href="#" class="submenu-link">App Users</a></li>
-                    </ul>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#" class="nav-link" onclick="toggleMenu(this)">
-                        <div class="nav-link-content">
-                            <i class="ph ph-database"></i>
-                            <span>Master</span>
-                        </div>
-                        <i class="ph ph-caret-down chevron"></i>
-                    </a>
-                    <ul class="submenu">
-                        <li><a href="#" class="submenu-link">Brand Master</a></li>
-                        
-                        <li class="submenu-item">
-                            <a href="#" class="submenu-link" onclick="toggleSubMenu(this, event)" style="justify-content: space-between;">
-                                <span>Product Category</span>
-                            </a>
-                            <ul class="submenu-level-2">
-                                <li><a href="#" class="submenu-link">Sub-Categories</a></li>
-                                <li><a href="#" class="submenu-link">Overviews</a></li>
-                                <li><a href="#" class="submenu-link">Suppliers Map</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-
             </ul>
         </div>
 
         <div class="user-profile">
-            <img src="https://ui-avatars.com/api/?name=Admin+User&background=D4AF37&color=fff" alt="User" class="user-img">
+            <div class="user-img">AD</div>
             <div class="user-info">
                 <h4>Super Admin</h4>
-                <p>Manage Access</p>
+                <p>Marudhu Traders</p>
             </div>
-            <i class="ph ph-sign-out" style="margin-left: auto; cursor: pointer; color: var(--text-muted);"></i>
         </div>
     </nav>
 
-    <div class="main-content">
-        
-        <div class="breadcrumb-custom">
-            <i class="ph ph-push-pin" style="color: #ef4444;"></i> 
-            <span>You are Here : </span>
-            <i class="ph ph-eye" style="margin-left: 5px;"></i> Stock 
-            <i class="ph ph-caret-double-right" style="font-size: 10px;"></i> 
-            <i class="ph ph-wrench"></i> Product 
-            <i class="ph ph-caret-double-right" style="font-size: 10px;"></i> 
-            <span class="active">Stock Entry</span>
-        </div>
-
-        <div class="stock-card">
-            <div class="stock-header">
-                <h5>Stock Entry</h5>
-                <small class="text-muted">ID: #STK-2024-889</small>
+    <main class="main-content">
+        <div class="card">
+            <div class="card-header">
+                <h2>Add New Stock Entry</h2>
             </div>
-            
-            <div class="form-container">
-                <form>
-                    <div class="row mb-4">
-                        <label for="productCode" class="col-sm-3 col-form-label text-sm-end">Product bar Code :</label>
-                        
-                        <div class="col-sm-9">
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="productCode" placeholder="Scan or Enter Code" autofocus>
-                                <button class="btn btn-outline-secondary" type="button"><i class="ph ph-magnifying-glass"></i></button>
-                            </div>
-                             <button type="button" class="btn-theme-print" onclick="window.print()">
-                            <i class="ph ph-printer"></i> Print
-                        </button>
+
+            <div class="card-body">
+                <form id="stockForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Name <span class="text-danger">*</span></label>
+                            <input type="text" id="name" placeholder="Enter product name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Weight <span class="text-danger">*</span></label>
+                            <select id="weight" required>
+                                <option value="">Select Weight</option>
+                                <option value="10g">10g</option>
+                                <option value="20g">20g</option>
+                                <option value="50g">50g</option>
+                                <option value="100g">100g</option>
+                                <option value="500g">500g</option>
+                                <option value="1kg">1kg</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Quantity <span class="text-danger">*</span></label>
+                            <input type="number" id="quantity" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Purchase Price (₹)</label>
+                            <input type="number" id="purchasePrice" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Selling Price (₹)</label>
+                            <input type="number" id="sellingPrice" step="0.01" required>
                         </div>
                     </div>
 
-                    <hr class="mb-4" style="border-color: #f1f5f9;">
-
-                    <div class="row mb-3">
-                        <label for="company" class="col-sm-3 col-form-label text-sm-end">Company :</label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control" id="company">
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <label for="brand" class="col-sm-3 col-form-label text-sm-end">Brand :</label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control" id="brand">
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <label for="model" class="col-sm-3 col-form-label text-sm-end">Model :</label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control" id="model">
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <label for="name" class="col-sm-3 col-form-label text-sm-end">Name :</label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control" id="name">
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <label for="size" class="col-sm-3 col-form-label text-sm-end">Size :</label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control" id="size">
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <label for="pPrice" class="col-sm-3 col-form-label text-sm-end">P. Price :</label>
-                        <div class="col-sm-9">
-                            <input type="number" class="form-control" id="pPrice" step="0.01">
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <label for="sPrice" class="col-sm-3 col-form-label text-sm-end">S. Price :</label>
-                        <div class="col-sm-9">
-                            <input type="number" class="form-control" id="sPrice" step="0.01">
-                        </div>
-                    </div>
-
-                    <div class="row mb-4">
-                        <label for="quantity" class="col-sm-3 col-form-label text-sm-end">Quantity :</label>
-                        <div class="col-sm-9">
-                            <input type="number" class="form-control" id="quantity">
-                        </div>
-                    </div>
-
-                    <div class="btn-group-custom">
-                       
-                        <button type="submit" class="btn-theme-save">
-                            <i class="ph ph-floppy-disk"></i> Save Entry
+                    <div style="text-align: right;">
+                        <button type="button" class="btn btn-add" onclick="addItem()">
+                            + Add to List
                         </button>
                     </div>
-
                 </form>
+
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Name</th>
+                            <th>Weight</th>
+                            <th>Quantity</th>
+                            <th>Purchase Price</th>
+                            <th>Selling Price</th>
+                            <th>Total Cost</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsTableBody">
+                        </tbody>
+                </table>
+            </div>
+
+            <div class="card-footer">
+                <button class="btn btn-primary" onclick="saveAllEntries()">
+                    Save All Entries
+                </button>
             </div>
         </div>
-
-    </div>
+    </main>
 
     <script>
-        // Toggle Main Level Menus
         function toggleMenu(element) {
-            const parent = element.parentElement;
-            parent.classList.toggle('open');
+            element.parentElement.classList.toggle('open');
         }
 
-        // Toggle Nested Submenus (Level 3)
-        function toggleSubMenu(element, event) {
-            event.preventDefault(); // Prevent jump
-            event.stopPropagation(); // Prevent parent closing
-            
-            const parent = element.parentElement;
-            parent.classList.toggle('open');
+        let items = [];
+        let serialNo = 1;
 
-            // Rotate chevron manually for sub-level
-            const icon = element.querySelector('.chevron');
-            if(parent.classList.contains('open')){
-                icon.style.transform = 'rotate(90deg)';
-                icon.style.color = 'var(--accent)';
-            } else {
-                icon.style.transform = 'rotate(0deg)';
-                icon.style.color = 'var(--text-muted)';
+        function addItem() {
+            const name = document.getElementById('name').value.trim();
+            const weight = document.getElementById('weight').value;
+            const quantity = parseFloat(document.getElementById('quantity').value);
+            const purchasePrice = parseFloat(document.getElementById('purchasePrice').value);
+            const sellingPrice = parseFloat(document.getElementById('sellingPrice').value);
+
+            if (!name || !weight || isNaN(quantity) || quantity < 1 || isNaN(purchasePrice) || isNaN(sellingPrice)) {
+                alert("Please fill all fields correctly.");
+                return;
             }
+
+            const totalCost = (purchasePrice * quantity).toFixed(2);
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${serialNo}</td>
+                <td>${name}</td>
+                <td>${weight}</td>
+                <td>${quantity}</td>
+                <td>₹${purchasePrice.toFixed(2)}</td>
+                <td>₹${sellingPrice.toFixed(2)}</td>
+                <td>₹${totalCost}</td>
+                <td><button class="btn btn-danger btn-sm" onclick="removeItem(this)">×</button></td>
+            `;
+
+            document.getElementById('itemsTableBody').appendChild(row);
+            items.push({ serialNo, name, weight, quantity, purchasePrice, sellingPrice, totalCost });
+            serialNo++;
+
+            document.getElementById('stockForm').reset();
+            document.getElementById('name').focus();
         }
 
-        // Mobile Sidebar Toggle
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
+        function removeItem(btn) {
+            const row = btn.closest('tr');
+            row.remove();
+            // Update serial numbers
+            document.querySelectorAll('#itemsTableBody tr').forEach((tr, i) => {
+                tr.cells[0].textContent = i + 1;
+            });
+            serialNo = document.querySelectorAll('#itemsTableBody tr').length + 1;
+        }
+
+        function saveAllEntries() {
+            if (items.length === 0) {
+                alert("No items to save.");
+                return;
+            }
+            console.log("Saved Stock Entries:", items);
+            alert("Stock entries saved successfully!");
+            items = [];
+            serialNo = 1;
+            document.getElementById('itemsTableBody').innerHTML = '';
         }
     </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Common Sidebar - Marudhu Traders</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #ccfbf1;
+            --sidebar-bg: #0f172a;
+            --text-muted: #94a3b8;
+            --text-light: #cbd5e1;
+            --shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: #f1f5f9;
+        }
+
+        .sidebar {
+            width: 280px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            box-shadow: var(--shadow);
+            z-index: 10;
+        }
+
+        .logo-area {
+            padding: 2rem 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: var(--primary);
+            display: inline-block;
+            font-size: 28px;
+            font-weight: bold;
+            line-height: 60px;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-top: 12px;
+        }
+
+        .nav-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            margin: 4px 12px;
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            border-radius: 12px;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-link-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-link i {
+            font-size: 20px;
+        }
+
+        .chevron {
+            font-size: 16px;
+            transition: transform 0.3s;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+        /* Active Main Menu (e.g. Stocks) */
+        .nav-link.active {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .nav-link.active::after {
+            content: '▶';
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: var(--primary);
+        }
+
+        /* Submenu Active Item */
+        .submenu-link.active {
+            background: rgba(13, 148, 136, 0.3);
+            color: white;
+            font-weight: 500;
+            border-radius: 10px;
+        }
+
+        .submenu-link:hover {
+            background: rgba(13, 148, 136, 0.2);
+            color: white;
+        }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            padding-left: 50px;
+        }
+
+        .nav-item.open > .submenu {
+            max-height: 400px;
+        }
+
+        .nav-item.open > .nav-link .chevron {
+            transform: rotate(180deg);
+        }
+
+        .submenu-link {
+            display: block;
+            padding: 10px 16px;
+            color: var(--text-muted);
+            font-size: 14px;
+            border-radius: 10px;
+            margin: 4px 0;
+            transition: 0.2s;
+        }
+
+        .user-profile {
+            padding: 1.5rem;
+            text-align: center;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .user-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: inline-block;
+            font-weight: bold;
+            color: white;
+            line-height: 48px;
+            font-size: 18px;
+        }
+
+        .user-info h4 {
+            color: white;
+            font-size: 14px;
+            margin: 10px 0 4px;
+        }
+
+        .user-info p {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="logo-area">
+            <div class="logo-image">MT</div>
+            <div class="logo-text">Marudhu Traders</div>
+        </div>
+
+        <div class="nav-scroll">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-link-content">
+                            <i class="ph ph-squares-four"></i>
+                            <span>Dashboard</span>
+                        </div>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleMenu(this)">
+                        <div class="nav-link-content">
+                            <i class="ph ph-receipt"></i>
+                            <span>Billing</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#" class="submenu-link">New Invoice</a></li>
+                        <li><a href="#" class="submenu-link">Invoice List</a></li>
+                        <li><a href="#" class="submenu-link">Customers</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item open">
+                    <a href="#" class="nav-link active">
+                        <div class="nav-link-content">
+                            <i class="ph ph-package"></i>
+                            <span>Stocks</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="po_provisions.html" class="submenu-link active">PO Provisions</a></li>
+                        <li><a href="stock_entry.html" class="submenu-link">Stock Entry</a></li>
+                        <li><a href="#" class="submenu-link">Damages</a></li>
+                        <li><a href="#" class="submenu-link">Current Stock</a></li>
+                        <li><a href="#" class="submenu-link">Stock Search</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleMenu(this)">
+                        <div class="nav-link-content">
+                            <i class="ph ph-arrows-left-right"></i>
+                            <span>Transactions</span>
+                        </div>
+                        <i class="ph ph-caret-down chevron"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#" class="submenu-link">Payments</a></li>
+                        <li><a href="#" class="submenu-link">Expenses</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="user-profile">
+            <div class="user-img">AD</div>
+            <div class="user-info">
+                <h4>Super Admin</h4>
+                <p>Marudhu Traders</p>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        function toggleMenu(element) {
+            element.parentElement.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>
